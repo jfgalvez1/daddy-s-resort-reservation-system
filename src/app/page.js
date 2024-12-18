@@ -1,4 +1,4 @@
-import NewReservation from "./components/NewReservations";
+import NewReservation from '@/components/NewReservations';
 
 export default function HomePage() {
   return (
