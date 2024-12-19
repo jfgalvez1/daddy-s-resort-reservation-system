@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'; // Import mongoose
-import connectMongoDB from '../../../db/connect'; // Import your connect function
 import { NextResponse } from 'next/server';
 import Reservation from '@/app/models/Reservation';
+import connectMongoDB from '@/db/connect';
 
 const DB_NAME = 'resort-reservation-db';
 

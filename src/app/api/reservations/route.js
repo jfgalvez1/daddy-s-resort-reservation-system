@@ -1,7 +1,7 @@
-import mongoose from "mongoose"; // Import mongoose
-import connectMongoDB from "../../../db/connect"; // Import your connect function
+import mongoose from 'mongoose'; // Import mongoose
+import connectMongoDB from '@/db/connect';
 
-const DB_NAME = "resort-reservation-db";
+const DB_NAME = 'resort-reservation-db';
 
 export async function GET(req) {
   try {
@@ -10,19 +10,19 @@ export async function GET(req) {
 
     // Use mongoose to query reservations collection
     const reservations = await mongoose.connection.db
-      .collection("reservations")
+      .collection('reservations')
       .find()
       .toArray();
 
     return new Response(JSON.stringify(reservations), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error("GET Error:", error);
+    console.error('GET Error:', error);
     return new Response(
       JSON.stringify({
-        error: "Failed to fetch reservations",
+        error: 'Failed to fetch reservations',
         details: error.message,
       }),
       { status: 500 }
@@ -40,15 +40,15 @@ export async function POST(req) {
 
     // Use mongoose to insert the reservation into the "reservations" collection
     const result = await mongoose.connection.db
-      .collection("reservations")
+      .collection('reservations')
       .insertOne(body);
 
     return new Response(
-      JSON.stringify({ message: "Reservation created", id: result.insertedId }),
+      JSON.stringify({ message: 'Reservation created', id: result.insertedId }),
       { status: 201 }
     );
   } catch (error) {
-    console.error("Detailed POST Error:", {
+    console.error('Detailed POST Error:', {
       message: error.message,
       code: error.code,
       codeName: error.codeName,
@@ -57,7 +57,7 @@ export async function POST(req) {
 
     return new Response(
       JSON.stringify({
-        error: "Failed to create reservation",
+        error: 'Failed to create reservation',
         details: error.message,
         code: error.code,
       }),

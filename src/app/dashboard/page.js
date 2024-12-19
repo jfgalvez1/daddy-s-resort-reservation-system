@@ -1,5 +1,5 @@
-"use client";
-import { useState, useEffect } from "react";
+'use client';
+import { useState, useEffect } from 'react';
 
 export default function DashboardPage() {
   const [reservations, setReservations] = useState([]);
@@ -8,7 +8,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchReservations = async () => {
-      const response = await fetch("/api/reservations");
+      const response = await fetch('/api/reservations');
       const data = await response.json();
       console.log(data);
       setReservations(data);
@@ -18,21 +18,21 @@ export default function DashboardPage() {
 
   // Handle Delete
   const handleDelete = async (id) => {
-    if (confirm("Are you sure you want to delete this reservation?")) {
+    if (confirm('Are you sure you want to delete this reservation?')) {
       try {
-        const response = await fetch(`/api/reservations/${id}`, {
-          method: "DELETE",
+        const response = await fetch(`/api/reserved/${id}`, {
+          method: 'DELETE',
         });
         if (response.ok) {
           setReservations((prev) =>
             prev.filter((reservation) => reservation._id !== id)
           );
-          alert("Reservation deleted successfully");
+          alert('Reservation deleted successfully');
         } else {
-          alert("Error deleting reservation");
+          alert('Error deleting reservation');
         }
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     }
   };
@@ -46,16 +46,13 @@ export default function DashboardPage() {
   // Handle Save Changes for Edit
   const handleSaveChanges = async () => {
     try {
-      const response = await fetch(
-        `/api/reservations/${editingReservation._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(editingReservation), // Updated reservation data
-        }
-      );
+      const response = await fetch(`/api/reserved/${editingReservation._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editingReservation), // Updated reservation data
+      });
 
       if (response.ok) {
         const updatedReservation = await response.json();
@@ -66,13 +63,13 @@ export default function DashboardPage() {
               : reservation
           )
         );
-        alert("Reservation updated successfully");
+        alert('Reservation updated successfully');
         setShowEditModal(false); // Close the modal
       } else {
-        alert("Error updating reservation");
+        alert('Error updating reservation');
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   };
 
@@ -84,7 +81,8 @@ export default function DashboardPage() {
           <thead>
             <tr className="bg-gray-200">
               <th className="border border-gray-300 px-4 py-2">Name</th>
-              <th className="border border-gray-300 px-4 py-2">Email</th>
+              <th className="border border-gray-300 px-4 py-2">Exclusivity</th>
+              <th className="border border-gray-300 px-4 py-2">Contains</th>
               <th className="border border-gray-300 px-4 py-2">Phone</th>
               <th className="border border-gray-300 px-4 py-2">Status</th>
               <th className="border border-gray-300 px-4 py-2">Check-In</th>
@@ -99,13 +97,27 @@ export default function DashboardPage() {
                   {reservation.name}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {reservation.email}
+                  {reservation.exclusivity}
                 </td>
+
+                <td className="border border-gray-300 px-4 py-2">
+                  {/* Display Others */}
+                  {reservation.othersType?.length > 0 ? (
+                    <ul>
+                      {reservation.othersType.map((other, index) => (
+                        <li key={index}>-{other}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    'N/A'
+                  )}
+                </td>
+
                 <td className="border border-gray-300 px-4 py-2">
                   {reservation.phone}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {reservation.status}
+                  {reservation.bookingStatus}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {new Date(reservation.checkIn).toLocaleDateString()}
@@ -160,19 +172,33 @@ export default function DashboardPage() {
               }
               placeholder="Name"
             />
+
             <input
               type="text"
               className="border p-2 w-full mb-4"
-              value={editingReservation.email}
+              value={editingReservation.phone}
               onChange={(e) =>
                 setEditingReservation({
                   ...editingReservation,
-                  email: e.target.value,
+                  name: e.target.value,
                 })
               }
-              placeholder="Email"
+              placeholder="Contact No."
             />
-            {/* Add more fields as needed */}
+
+            <input
+              type="text"
+              className="border p-2 w-full mb-4"
+              value={editingReservation.bookingStatus}
+              onChange={(e) =>
+                setEditingReservation({
+                  ...editingReservation,
+                  name: e.target.value,
+                })
+              }
+              placeholder="Contact No."
+            />
+
             <button
               type="button"
               onClick={handleSaveChanges}
