@@ -1,5 +1,5 @@
-'use client';
-import { useState, useEffect } from 'react';
+"use client";
+import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
   const [reservations, setReservations] = useState([]);
@@ -8,7 +8,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchReservations = async () => {
-      const response = await fetch('/api/reservations');
+      const response = await fetch("/api/reservations");
       const data = await response.json();
       console.log(data);
       setReservations(data);
@@ -18,21 +18,21 @@ export default function DashboardPage() {
 
   // Handle Delete
   const handleDelete = async (id) => {
-    if (confirm('Are you sure you want to delete this reservation?')) {
+    if (confirm("Are you sure you want to delete this reservation?")) {
       try {
         const response = await fetch(`/api/reservations/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
         });
         if (response.ok) {
           setReservations((prev) =>
             prev.filter((reservation) => reservation._id !== id)
           );
-          alert('Reservation deleted successfully');
+          alert("Reservation deleted successfully");
         } else {
-          alert('Error deleting reservation');
+          alert("Error deleting reservation");
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
   };
@@ -49,9 +49,9 @@ export default function DashboardPage() {
       const response = await fetch(
         `/api/reservations/${editingReservation._id}`,
         {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(editingReservation), // Updated reservation data
         }
@@ -66,13 +66,13 @@ export default function DashboardPage() {
               : reservation
           )
         );
-        alert('Reservation updated successfully');
+        alert("Reservation updated successfully");
         setShowEditModal(false); // Close the modal
       } else {
-        alert('Error updating reservation');
+        alert("Error updating reservation");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 

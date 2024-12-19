@@ -1,24 +1,23 @@
-import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import mongoose from "mongoose";
 
-const { Schema, model, models } = mongoose;
-
-const ReservationSchema = new Schema({
-  reservation_id: {
-    type: String,
-    default: () => uuidv4(),
-    unique: true,
+const ReservationSchema = new mongoose.Schema(
+  {
+    reservation_id: { type: String, required: true },
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    roomType: { type: [String], required: false },
+    others: { type: [String], required: false },
+    bookingStatus: { type: String, enum: ["pencil", "paid"], required: true },
+    exclusivity: {
+      type: String,
+      enum: ["not-exclusive", "exclusive", "exclusive-w-room"],
+      required: true,
+    },
+    checkIn: { type: Date, required: true },
+    checkOut: { type: Date, required: true },
   },
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  phone: { type: String, required: true },
-  status: { type: String, required: true },
-  checkIn: { type: Date, required: true },
-  checkOut: { type: Date, required: true },
-  createdAt: { type: Date, default: Date.now },
-});
+  { timestamps: true }
+);
 
-const Reservation =
-  models.Reservation || model('Reservation', ReservationSchema);
-
-export default Reservation;
+export default mongoose.models.Reservation ||
+  mongoose.model("Reservation", ReservationSchema);
