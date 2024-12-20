@@ -1,5 +1,5 @@
-'use client';
-import { useState, useEffect } from 'react';
+"use client";
+import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
   const [reservations, setReservations] = useState([]);
@@ -8,7 +8,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchReservations = async () => {
-      const response = await fetch('/api/reservations');
+      const response = await fetch("/api/reservations");
       const data = await response.json();
       console.log(data);
       setReservations(data);
@@ -18,21 +18,21 @@ export default function DashboardPage() {
 
   // Handle Delete
   const handleDelete = async (id) => {
-    if (confirm('Are you sure you want to delete this reservation?')) {
+    if (confirm("Are you sure you want to delete this reservation?")) {
       try {
         const response = await fetch(`/api/reserved/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
         });
         if (response.ok) {
           setReservations((prev) =>
             prev.filter((reservation) => reservation._id !== id)
           );
-          alert('Reservation deleted successfully');
+          alert("Reservation deleted successfully");
         } else {
-          alert('Error deleting reservation');
+          alert("Error deleting reservation");
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
   };
@@ -47,9 +47,9 @@ export default function DashboardPage() {
   const handleSaveChanges = async () => {
     try {
       const response = await fetch(`/api/reserved/${editingReservation._id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(editingReservation), // Updated reservation data
       });
@@ -63,18 +63,18 @@ export default function DashboardPage() {
               : reservation
           )
         );
-        alert('Reservation updated successfully');
+        alert("Reservation updated successfully");
         setShowEditModal(false); // Close the modal
       } else {
-        alert('Error updating reservation');
+        alert("Error updating reservation");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
   return (
-    <div className="bg-white shadow-md p-6 rounded-lg">
+    <div className="bg-white text-black shadow-md p-6 rounded-lg">
       <h2 className="text-xl font-bold mb-4">Admin Dashboard</h2>
       {reservations.length > 0 ? (
         <table className="w-full border-collapse border border-gray-300">
@@ -83,7 +83,7 @@ export default function DashboardPage() {
               <th className="border border-gray-300 px-4 py-2">Name</th>
               <th className="border border-gray-300 px-4 py-2">Exclusivity</th>
               <th className="border border-gray-300 px-4 py-2">Contains</th>
-              <th className="border border-gray-300 px-4 py-2">Phone</th>
+              <th className="border border-gray-300 px-4 py-2">Contact No.</th>
               <th className="border border-gray-300 px-4 py-2">Status</th>
               <th className="border border-gray-300 px-4 py-2">Check-In</th>
               <th className="border border-gray-300 px-4 py-2">Check-Out</th>
@@ -109,7 +109,7 @@ export default function DashboardPage() {
                       ))}
                     </ul>
                   ) : (
-                    'N/A'
+                    "N/A"
                   )}
                 </td>
 
@@ -158,7 +158,7 @@ export default function DashboardPage() {
       {/* Edit Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="bg-white text-black p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-bold mb-4">Edit Reservation</h3>
             <input
               type="text"
@@ -180,7 +180,7 @@ export default function DashboardPage() {
               onChange={(e) =>
                 setEditingReservation({
                   ...editingReservation,
-                  name: e.target.value,
+                  phone: e.target.value,
                 })
               }
               placeholder="Contact No."
@@ -193,10 +193,10 @@ export default function DashboardPage() {
               onChange={(e) =>
                 setEditingReservation({
                   ...editingReservation,
-                  name: e.target.value,
+                  bookingStatus: e.target.value,
                 })
               }
-              placeholder="Contact No."
+              placeholder="Booking Status"
             />
 
             <button

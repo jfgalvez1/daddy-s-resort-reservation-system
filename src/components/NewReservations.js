@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Calendar from 'react-calendar';
-import { v4 as uuidv4 } from 'uuid';
-import 'react-calendar/dist/Calendar.css'; // Import Calendar styles
+import { useState } from "react";
+import Calendar from "react-calendar";
+import { v4 as uuidv4 } from "uuid";
+import "react-calendar/dist/Calendar.css"; // Import Calendar styles
 
 export default function NewReservation() {
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
+    name: "",
+    phone: "",
     roomType: [],
     othersType: [],
-    bookingStatus: '',
-    exclusivity: '',
+    bookingStatus: "",
+    exclusivity: "",
   });
   const [dates, setDates] = useState([new Date(), new Date()]);
 
   const [exclusive, setExclusive] = useState(false);
 
-  console.log('formData:', formData);
+  console.log("formData:", formData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,19 +26,19 @@ export default function NewReservation() {
     const [checkIn, checkOut] = dates;
 
     const reservation_id = uuidv4();
-    const response = await fetch('/api/reservations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/reservations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...formData, reservation_id, checkIn, checkOut }),
     });
 
-    console.log('RESPONSE', response);
+    console.log("RESPONSE", response);
 
     if (response.ok) {
-      alert('Reservation created successfully!');
-      setFormData({ name: '', phone: '', roomType: [], bookingStatus: '' });
+      alert("Reservation created successfully!");
+      setFormData({ name: "", phone: "", roomType: [], bookingStatus: "" });
     } else {
-      alert('Failed to create reservation.');
+      alert("Failed to create reservation.");
     }
   };
 
@@ -114,7 +114,7 @@ export default function NewReservation() {
           id="exclusivity"
           value={formData.exclusivity}
           onChange={(e) => {
-            if (e.target.value === 'not-exclusive') {
+            if (e.target.value === "not-exclusive") {
               setExclusive(false);
             } else {
               setExclusive(true);
@@ -125,6 +125,9 @@ export default function NewReservation() {
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 text-black"
           required
         >
+          <option value="" disabled>
+            Select
+          </option>
           <option value="not-exclusive">Not Exclusive</option>
           <option value="exclusive">Exclusive</option>
         </select>
@@ -136,14 +139,14 @@ export default function NewReservation() {
         </label>
         <div className="space-y-2">
           {[
-            'couple-a',
-            'couple-b',
-            'couple-c',
-            'couple-d',
-            'family-a',
-            'family-b',
-            'family-c',
-            'family-d',
+            "couple-a",
+            "couple-b",
+            "couple-c",
+            "couple-d",
+            "family-a",
+            "family-b",
+            "family-c",
+            "family-d",
           ].map((room) => (
             <div key={room} className="flex items-center text-black">
               <input
@@ -155,7 +158,7 @@ export default function NewReservation() {
                 className="mr-2"
               />
               <label htmlFor={room} className="text-sm">{`${room
-                .replace(/-/g, ' ')
+                .replace(/-/g, " ")
                 .toUpperCase()}`}</label>
             </div>
           ))}
@@ -168,7 +171,7 @@ export default function NewReservation() {
             Others
           </label>
           <div className="space-y-2">
-            {['pavillion-a', 'pavillion-b', 'videoke', 'cottage'].map(
+            {["pavillion-a", "pavillion-b", "videoke", "cottage"].map(
               (others) => (
                 <div key={others} className="flex items-center text-black">
                   <input
@@ -180,7 +183,7 @@ export default function NewReservation() {
                     className="mr-2"
                   />
                   <label htmlFor={others} className="text-sm">{`${others
-                    .replace(/-/g, ' ')
+                    .replace(/-/g, " ")
                     .toUpperCase()}`}</label>
                 </div>
               )
@@ -203,6 +206,7 @@ export default function NewReservation() {
           onChange={setDates}
           value={dates}
           className="rounded-lg border border-gray-300 text-black"
+          tileDisabled={({ date }) => date < new Date().setHours(0, 0, 0, 0)} // Disable past dates
         />
       </div>
 
@@ -226,10 +230,10 @@ export default function NewReservation() {
           <option value="" disabled>
             Select Booking Status
           </option>
-          <option className="text-black" value="pencil">
-            Pencil Booking
+          <option className="text-black" value="Unconfirmed Reservation">
+            Unconfirmed Reservation
           </option>
-          <option className="text-black" value="paid">
+          <option className="text-black" value="Paid Reservation">
             Paid Reservation
           </option>
         </select>
