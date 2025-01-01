@@ -3,8 +3,6 @@ import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { getUserByEmail } from './data/user';
-
 export const {
   handlers: { GET, POST },
   auth,
@@ -17,28 +15,36 @@ export const {
   providers: [
     CredentialsProvider({
       credentials: {
-        email: {},
-        password: {},
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (credentials === null) return null;
+        if (!credentials) return null;
 
         try {
-          const user = getUserByEmail(credentials?.email);
-          console.log(user);
-          if (user) {
-            const isMatch = user?.password === credentials.password;
+          // Send a POST request to the /api/login endpoint
+          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          });
 
-            if (isMatch) {
-              return user;
-            } else {
-              throw new Error('Email or Password is not correct');
-            }
-          } else {
-            throw new Error('User not found');
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Invalid credentials');
           }
+
+          // Parse user data from the response
+          const user = await response.json();
+          return user; // Return user object to NextAuth
         } catch (error) {
-          throw new Error(error);
+          console.error('Error in CredentialsProvider:', error.message);
+          throw new Error(error.message || 'Login failed');
         }
       },
     }),
