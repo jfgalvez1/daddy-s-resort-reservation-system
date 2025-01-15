@@ -1,4 +1,4 @@
-import LoginForm from './../components/LoginForm';
+import LoginForm from "./../components/LoginForm";
 
 export default function HomePage() {
   return (
@@ -7,7 +7,7 @@ export default function HomePage() {
         Welcome to Our Resort
       </h2>
       <div className="flex flex-col justify-center items-center m-4">
-        <h1 className="text-3xl my-3">Hey, time to Sign In</h1>
+        <h1 className="text-3xl my-3 text-black">Hey, time to Sign In</h1>
         <LoginForm />
       </div>
     </div>

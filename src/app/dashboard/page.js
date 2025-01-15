@@ -1,44 +1,48 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
+"use client";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
-const DashboardPage = async () => {
+const DashboardPage = () => {
+  const { data: session, status } = useSession(); // Get session data and status
   const [reservations, setReservations] = useState([]);
   const [editingReservation, setEditingReservation] = useState(null); // For editing
   const [showEditModal, setShowEditModal] = useState(false); // Modal visibility
 
-  const session = await auth();
-
-  if (!session?.user) redirect('/');
+  useEffect(() => {
+    if (status === "loading") return; // Wait for session to load
+    if (!session?.user) redirect("/"); // Redirect if not authenticated
+  }, [session, status]);
 
   useEffect(() => {
     const fetchReservations = async () => {
-      const response = await fetch('/api/reservations');
+      const response = await fetch("/api/reservations");
       const data = await response.json();
-      console.log(data);
       setReservations(data);
     };
-    fetchReservations();
-  }, []);
+
+    if (session?.user) {
+      fetchReservations();
+    }
+  }, [session]);
 
   // Handle Delete
   const handleDelete = async (id) => {
-    if (confirm('Are you sure you want to delete this reservation?')) {
+    if (confirm("Are you sure you want to delete this reservation?")) {
       try {
         const response = await fetch(`/api/reserved/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
         });
         if (response.ok) {
           setReservations((prev) =>
             prev.filter((reservation) => reservation._id !== id)
           );
-          alert('Reservation deleted successfully');
+          alert("Reservation deleted successfully");
         } else {
-          alert('Error deleting reservation');
+          alert("Error deleting reservation");
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
   };
@@ -53,9 +57,9 @@ const DashboardPage = async () => {
   const handleSaveChanges = async () => {
     try {
       const response = await fetch(`/api/reserved/${editingReservation._id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(editingReservation), // Updated reservation data
       });
@@ -69,15 +73,23 @@ const DashboardPage = async () => {
               : reservation
           )
         );
-        alert('Reservation updated successfully');
+        alert("Reservation updated successfully");
         setShowEditModal(false); // Close the modal
       } else {
-        alert('Error updating reservation');
+        alert("Error updating reservation");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (!session?.user) {
+    return null; // Prevent rendering until redirection
+  }
 
   return (
     <div className="bg-white text-black shadow-md p-6 rounded-lg">
@@ -105,9 +117,7 @@ const DashboardPage = async () => {
                 <td className="border border-gray-300 px-4 py-2">
                   {reservation.exclusivity}
                 </td>
-
                 <td className="border border-gray-300 px-4 py-2">
-                  {/* Display Others */}
                   {reservation.othersType?.length > 0 ? (
                     <ul>
                       {reservation.othersType.map((other, index) => (
@@ -115,10 +125,9 @@ const DashboardPage = async () => {
                       ))}
                     </ul>
                   ) : (
-                    'N/A'
+                    "N/A"
                   )}
                 </td>
-
                 <td className="border border-gray-300 px-4 py-2">
                   {reservation.phone}
                 </td>
@@ -159,68 +168,6 @@ const DashboardPage = async () => {
         </table>
       ) : (
         <p className="text-gray-600">No reservations found.</p>
-      )}
-
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white text-black p-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-bold mb-4">Edit Reservation</h3>
-            <input
-              type="text"
-              className="border p-2 w-full mb-4"
-              value={editingReservation.name}
-              onChange={(e) =>
-                setEditingReservation({
-                  ...editingReservation,
-                  name: e.target.value,
-                })
-              }
-              placeholder="Name"
-            />
-
-            <input
-              type="text"
-              className="border p-2 w-full mb-4"
-              value={editingReservation.phone}
-              onChange={(e) =>
-                setEditingReservation({
-                  ...editingReservation,
-                  phone: e.target.value,
-                })
-              }
-              placeholder="Contact No."
-            />
-
-            <input
-              type="text"
-              className="border p-2 w-full mb-4"
-              value={editingReservation.bookingStatus}
-              onChange={(e) =>
-                setEditingReservation({
-                  ...editingReservation,
-                  bookingStatus: e.target.value,
-                })
-              }
-              placeholder="Booking Status"
-            />
-
-            <button
-              type="button"
-              onClick={handleSaveChanges}
-              className="text-white bg-green-500 hover:bg-green-600 px-4 py-2 rounded mr-2"
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowEditModal(false)}
-              className="text-white bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
       )}
     </div>
   );
